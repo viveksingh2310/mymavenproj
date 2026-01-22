@@ -23,7 +23,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # THIS STEP IS THE FIX
       - name: Configure Maven for GitHub Packages
         run: |
           mkdir -p ~/.m2
@@ -32,12 +31,14 @@ jobs:
             <servers>
               <server>
                 <id>github</id>
-                <username>${GITHUB_ACTOR}</username>
-                <password>${GITHUB_TOKEN}</password>
+                <username>viveksingh2310</username>
+                <password>${MAVEN_TOKEN}</password>
               </server>
             </servers>
           </settings>
           EOF
+        env:
+          MAVEN_TOKEN: ${{ secrets.MAVEN_TOKEN }}
 
       - name: Maven validate
         run: mvn validate
@@ -65,5 +66,3 @@ jobs:
 
       - name: Maven deploy (REAL)
         run: mvn deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
