@@ -2,12 +2,16 @@ name: Maven 9 Goals Workflow
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write   # REQUIRED for real deployment
 
     steps:
       - name: Checkout Code
@@ -18,6 +22,8 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+          server-id: github
+          settings-path: ${{ github.workspace }}
 
       - name: Maven validate
         run: mvn validate
@@ -43,5 +49,7 @@ jobs:
       - name: Maven clean
         run: mvn clean
 
-      - name: Maven deploy (dry run)
-        run: echo "Skipping real deploy for safety"
+      - name: Maven deploy (REAL)
+        run: mvn deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
