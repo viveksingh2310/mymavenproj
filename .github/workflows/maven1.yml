@@ -1,0 +1,47 @@
+name: Maven 9 Goals Workflow
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Maven validate
+        run: mvn validate
+
+      - name: Maven compile
+        run: mvn compile
+
+      - name: Maven test
+        run: mvn test
+
+      - name: Maven package
+        run: mvn package
+
+      - name: Maven verify
+        run: mvn verify
+
+      - name: Maven install
+        run: mvn install
+
+      - name: Maven site
+        run: mvn site
+
+      - name: Maven clean
+        run: mvn clean
+
+      - name: Maven deploy (dry run)
+        run: echo "Skipping real deploy for safety"
