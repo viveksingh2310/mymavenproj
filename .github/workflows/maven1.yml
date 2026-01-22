@@ -11,7 +11,7 @@ jobs:
 
     permissions:
       contents: read
-      packages: write   # REQUIRED for real deployment
+      packages: write
 
     steps:
       - name: Checkout Code
@@ -22,8 +22,22 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-          server-id: github
-          settings-path: ${{ github.workspace }}
+
+      # THIS STEP IS THE FIX
+      - name: Configure Maven for GitHub Packages
+        run: |
+          mkdir -p ~/.m2
+          cat <<EOF > ~/.m2/settings.xml
+          <settings>
+            <servers>
+              <server>
+                <id>github</id>
+                <username>${GITHUB_ACTOR}</username>
+                <password>${GITHUB_TOKEN}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
 
       - name: Maven validate
         run: mvn validate
